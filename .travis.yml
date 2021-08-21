@@ -1,0 +1,30 @@
+language: generic
+sudo: required
+services:
+  - docker
+
+# build test images
+before_install:
+  - docker build -t dbarattinipg/client-test -f ./client/Dockerfile.dev ./client
+
+# run tests
+script:
+  - docker run -e CI=true dbarattinipg/client-test yarn test
+
+# build and push production images to dockerhub
+after_success:
+  # build production images
+  - docker build -t dbarattinipg/complex-client ./client
+  - docker build -t dbarattinipg/complex-nginx ./nginx
+  - docker build -t dbarattinipg/complex-server ./server
+  - docker build -t dbarattinipg/complex-worker ./worker
+  # log in to the docker CLI
+  - echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_ID" --password-stdin
+  # push production images to dockerhub
+  - dcker push dbarattinipg/complex-client 
+  - dcker push dbarattinipg/complex-nginx 
+  - dcker push dbarattinipg/complex-server 
+  - dcker push dbarattinipg/complex-worker 
+
+
+
