@@ -21,10 +21,7 @@ after_success:
   # log in to the docker CLI
   - echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_ID" --password-stdin
   # push production images to dockerhub
-  - dcker push dbarattinipg/complex-client 
-  - dcker push dbarattinipg/complex-nginx 
-  - dcker push dbarattinipg/complex-server 
-  - dcker push dbarattinipg/complex-worker 
-
-
-
+  - docker push dbarattinipg/complex-client
+  - docker push dbarattinipg/complex-nginx
+  - docker push dbarattinipg/complex-server
+  - docker push dbarattinipg/complex-worker
