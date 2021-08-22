@@ -1,58 +1,36 @@
 version: '3'
 services:
-  postgres:
-    image: 'postgres:13-alpine'
-    environment:
-      - POSTGRES_PASSWORD=postgres_password
-  redis:
-    image: 'redis:6-alpine'
-  api:
-    depends_on:
-      - postgres
-      - redis
-    build:
-      context: ./server
-      dockerfile: Dockerfile.dev
-    volumes:
-      - '/app/node_modules'
-      - './server:/app'
-    environment:
-      - REDIS_HOST=redis
-      - REDIS_PORT=6379
-      - PG_USER=postgres
-      - PG_PORT=5432
-      - PG_HOST=postgres
-      - PG_DATABASE=postgres
-      - PG_PASSWORD=postgres_password
   client:
     depends_on:
-      - api
-    stdin_open: true
-    build:
-      context: ./client
-      dockerfile: Dockerfile.dev
-    volumes:
-      - '/app/node_modules'
-      - './client:/app'
-  worker:
-    depends_on:
-      - redis
-    build:
-      context: ./worker
-      dockerfile: Dockerfile.dev
-    volumes:
-      - '/app/node_modules'
-      - './worker:/app'
+      - server
+    image: 'dbarattinipg/complex-client'
+    mem_limit: 128m
+    hostname: client
+  server:
+    image: 'dbarattinipg/complex-server'
+    mem_limit: 128m
+    hostname: api
     environment:
-      - REDIS_HOST=redis
-      - REDIS_PORT=6379
+      - REDIS_HOST=$REDIS_HOST
+      - REDIS_PORT=$REDIS_PORT
+      - PG_USER=$PG_USER
+      - PG_HOST=$PG_HOST
+      - PG_DATABASE=$PG_DATABASE
+      - PG_PASSWORD=$PG_PASSWORD
+      - PG_PORT=$PG_PORT
+  worker:
+    image: 'dbarattinipg/complex-worker'
+    mem_limit: 128m
+    hostname: worker
+    environment:
+      - REDIS_HOST=$REDIS_HOST
+      - REDIS_PORT=$REDIS_PORT
   nginx:
+    image: 'dbarattinipg/complex-nginx'
     depends_on:
-      - api
+      - server
       - client
-    restart: always
-    build:
-      context: ./nginx
-      dockerfile: Dockerfile.dev
+    mem_limit: 128m
+    hostname: nginx
     ports:
-      - '3050:80'
+      - '80:80'
