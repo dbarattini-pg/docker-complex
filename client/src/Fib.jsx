@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
+import './Fib.css';
 
 const Fib = () => {
   const [values, setValues] = useState({});
@@ -53,25 +54,30 @@ const Fib = () => {
   };
 
   return (
-    <div>
-      <form onSubmit={handleSubmit}>
-        <label htmlFor="index">
-          Enter your index:
-          <input
-            id="index"
-            type="number"
-            value={index}
-            onChange={(event) => setIndex(event.target.value)}
-            style={{ marginLeft: '10px' }}
-          />
-        </label>
-        <button type="submit">Submit</button>
-      </form>
-      <h3>Indexes I have seen:</h3>
-      {renderSeenIndexes()}
+    <div className="Fib-container">
+      <div className="Fib-title">
+        <h1>Fib Calculator</h1>
+      </div>
+      <div className="Fib-form">
+        <form onSubmit={handleSubmit}>
+          <label htmlFor="index">
+            Enter your index:
+            <input
+              id="index"
+              type="number"
+              value={index}
+              onChange={(event) => setIndex(event.target.value)}
+              style={{ marginLeft: '10px' }}
+            />
+          </label>
+          <button type="submit">Submit</button>
+        </form>
+        <h3>Indexes I have seen:</h3>
+        {renderSeenIndexes()}
 
-      <h3>Calculated Values:</h3>
-      {renderValues()}
+        <h3>Calculated Values:</h3>
+        {renderValues()}
+      </div>
     </div>
   );
 };
